@@ -96,22 +96,20 @@ public:
         display.display();
     }
     
+    // Helper function to draw square eyes
+    void drawSquareEyes(int leftEyeX, int leftEyeY, int eyeSize) {
+        // Left eye (square/rectangle)
+        display.drawRect(leftEyeX - eyeSize/2, leftEyeY - eyeSize/2, eyeSize, eyeSize, SSD1306_WHITE);
+        
+        // Right eye (square/rectangle)
+        display.drawRect(leftEyeX + 30, leftEyeY - eyeSize/2, eyeSize, eyeSize, SSD1306_WHITE);
+    }
+    
     void showHappyFace() {
         display.clearDisplay();
         
-        // Draw happy face
-        // Face circle
-        display.drawCircle(64, 32, 30, SSD1306_WHITE);
-        
-        // Eyes
-        display.fillCircle(50, 24, 4, SSD1306_WHITE);  // Left eye
-        display.fillCircle(78, 24, 4, SSD1306_WHITE);  // Right eye
-        
-        // Happy mouth (arc)
-        for (int x = 48; x <= 80; x++) {
-            int y = 35 + (x - 48) * (x - 48) / 256;
-            display.drawPixel(x, y, SSD1306_WHITE);
-        }
+        // Draw only square eyes (happy = normal square eyes)
+        drawSquareEyes(42, 32, 14);
         
         display.display();
     }
@@ -119,18 +117,15 @@ public:
     void showSadFace() {
         display.clearDisplay();
         
-        // Draw sad face
-        display.drawCircle(64, 32, 30, SSD1306_WHITE);
+        // Draw square eyes with small inner marks to show sadness
+        display.drawRect(35, 25, 14, 14, SSD1306_WHITE);
+        display.drawRect(65, 25, 14, 14, SSD1306_WHITE);
         
-        // Eyes
-        display.fillCircle(50, 24, 4, SSD1306_WHITE);
-        display.fillCircle(78, 24, 4, SSD1306_WHITE);
-        
-        // Sad mouth (inverted arc)
-        for (int x = 48; x <= 80; x++) {
-            int y = 48 - (x - 48) * (x - 48) / 256;
-            display.drawPixel(x, y, SSD1306_WHITE);
-        }
+        // Small tear marks
+        display.drawPixel(42, 40, SSD1306_WHITE);
+        display.drawPixel(42, 41, SSD1306_WHITE);
+        display.drawPixel(72, 40, SSD1306_WHITE);
+        display.drawPixel(72, 41, SSD1306_WHITE);
         
         display.display();
     }
@@ -138,14 +133,13 @@ public:
     void showAngryFace() {
         display.clearDisplay();
         
-        display.drawCircle(64, 32, 30, SSD1306_WHITE);
+        // Angry eyes - filled squares
+        display.fillRect(35, 25, 14, 14, SSD1306_WHITE);
+        display.fillRect(65, 25, 14, 14, SSD1306_WHITE);
         
-        // Angry eyes (slanted)
-        display.drawLine(46, 20, 54, 28, SSD1306_WHITE);
-        display.drawLine(74, 20, 82, 28, SSD1306_WHITE);
-        
-        // Angry mouth
-        display.drawLine(48, 45, 80, 45, SSD1306_WHITE);
+        // Diagonal line on eyes to show anger
+        display.drawLine(35, 25, 49, 39, SSD1306_BLACK);
+        display.drawLine(65, 25, 79, 39, SSD1306_BLACK);
         
         display.display();
     }
@@ -153,17 +147,17 @@ public:
     void showConfusedFace() {
         display.clearDisplay();
         
-        display.drawCircle(64, 32, 30, SSD1306_WHITE);
+        // Confused eyes - squares with dots in center
+        display.drawRect(35, 25, 14, 14, SSD1306_WHITE);
+        display.drawRect(65, 25, 14, 14, SSD1306_WHITE);
         
-        // Confused eyes (circles with inner dots)
-        display.drawCircle(50, 24, 3, SSD1306_WHITE);
-        display.drawCircle(78, 24, 3, SSD1306_WHITE);
-        display.fillCircle(50, 24, 1, SSD1306_WHITE);
-        display.fillCircle(78, 24, 1, SSD1306_WHITE);
+        // Center dots for confused expression
+        display.fillCircle(42, 32, 1, SSD1306_WHITE);
+        display.fillCircle(72, 32, 1, SSD1306_WHITE);
         
-        // Question mark mouth
-        display.drawCircle(64, 42, 3, SSD1306_WHITE);
-        display.drawPixel(64, 48, SSD1306_WHITE);
+        // Extra question mark indicator
+        display.drawPixel(64, 50, SSD1306_WHITE);
+        display.drawPixel(64, 51, SSD1306_WHITE);
         
         display.display();
     }
@@ -174,8 +168,14 @@ public:
         display.setCursor(25, 10);
         display.println("MOVING...");
         
-        // Draw moving robot
+        // Draw moving robot with square eyes
         display.drawRect(30, 30, 20, 15, SSD1306_WHITE);
+        
+        // Square eyes on the robot body
+        display.drawRect(37, 35, 4, 4, SSD1306_WHITE);
+        display.drawRect(45, 35, 4, 4, SSD1306_WHITE);
+        
+        // Movement lines
         display.drawLine(30, 35, 20, 40, SSD1306_WHITE);
         display.drawLine(50, 35, 60, 40, SSD1306_WHITE);
         
@@ -185,11 +185,26 @@ public:
     void showTalkingAnimation() {
         display.clearDisplay();
         
-        // Draw talking face with animated mouth
-        display.drawCircle(64, 32, 30, SSD1306_WHITE);
-        display.fillCircle(50, 24, 4, SSD1306_WHITE);
-        display.fillCircle(78, 24, 4, SSD1306_WHITE);
-        display.fillCircle(64, 42, 5, SSD1306_WHITE);
+        // Draw talking face with animated square eyes
+        // Left eye
+        display.drawRect(35, 25, 14, 14, SSD1306_WHITE);
+        
+        // Right eye
+        display.drawRect(65, 25, 14, 14, SSD1306_WHITE);
+        
+        // Talking indicator - animated mouth representation with simple dot patterns
+        animationFrame = (animationFrame + 1) % 3;
+        
+        if (animationFrame == 0) {
+            display.drawPixel(64, 45, SSD1306_WHITE);
+            display.drawPixel(64, 46, SSD1306_WHITE);
+        } else if (animationFrame == 1) {
+            display.drawPixel(60, 45, SSD1306_WHITE);
+            display.drawPixel(68, 45, SSD1306_WHITE);
+        } else {
+            display.drawPixel(62, 46, SSD1306_WHITE);
+            display.drawPixel(66, 46, SSD1306_WHITE);
+        }
         
         display.display();
     }
